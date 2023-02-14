@@ -1,0 +1,29 @@
+version: '3.8' 
+services:
+  backend_main:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: backend_main
+    ports:
+      - 8001:8000
+    volumes:
+      - .:/app
+    depends_on:
+      - db_postgres
+  
+  db_postgres:
+    image: postgres:latest
+    container_name: db_postgres
+    restart: always
+    environment:
+      - POSTGRES_DB=main_db
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+
+    volumes:
+      - .dbdata:/var/lib/postgres
+    ports:
+      - 5433:5432
+
+

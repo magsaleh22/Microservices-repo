@@ -1,29 +1,40 @@
-version: '3.8' 
+version: "3.8"
 services:
   backend_main:
     build:
       context: .
       dockerfile: Dockerfile
+    command: ["manage.py", "runserver"]
     container_name: backend_main
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_PORT=${POSTGRES_PORT}
     ports:
-      - 8001:8000
-    volumes:
-      - .:/app
+      - "8001:8000"
     depends_on:
       - db_postgres
-  
+    networks:
+      - database-network
+
   db_postgres:
     image: postgres:latest
     container_name: db_postgres
     restart: always
     environment:
-      - POSTGRES_DB=main_db
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=root
-
-    volumes:
-      - .dbdata:/var/lib/postgres
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
     ports:
-      - 5433:5432
+      - "${POSTGRES_PORT}:5432"
+    networks:
+      - database-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
-
+networks:
+  database-network:

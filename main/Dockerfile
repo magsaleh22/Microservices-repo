@@ -1,6 +1,7 @@
 FROM python:latest
 
 ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE 1
 
 WORKDIR /app
 
@@ -11,4 +12,4 @@ RUN pip install -r requirements.txt
 COPY . /app
 
 ENTRYPOINT ["python"]
-CMD ["manage.py", "runserver", "0.0.0.0:8000"]
+#CMD ["manage.py", "runserver", "0.0.0.0:8000"]
